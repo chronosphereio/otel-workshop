@@ -1,0 +1,187 @@
+mode: "deployment"
+image:
+  repository: "otel/opentelemetry-collector-contrib"
+
+extraEnvs:
+  - name: CHRONOSPHERE_ORG_NAME
+    valueFrom:
+      secretKeyRef:
+        key: org
+        name: chronosphere-secret
+  - name: CHRONOSPHERE_API_TOKEN
+    valueFrom:
+      secretKeyRef:
+        key: api-token
+        name: chronosphere-secret
+
+clusterRole:
+  # Specifies whether a clusterRole should be created
+  # Some presets also trigger the creation of a cluster role and cluster role binding.
+  # If using one of those presets, this field is no-op.
+  create: true
+  # Annotations to add to the clusterRole
+  # Can be used in combination with presets that create a cluster role.
+  annotations: {}
+  # The name of the clusterRole to use.
+  # If not set a name is generated using the full name template
+  # Can be used in combination with presets that create a cluster role.
+  name: ""
+  # A set of rules as documented here : https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+  # Can be used in combination with presets that create a cluster role to add additional rules.
+  rules:
+    - apiGroups:
+        - ""
+      resources:
+        - "pods"
+        - "nodes"
+      verbs:
+        - "get"
+        - "list"
+        - "watch"
+    - apiGroups:
+        - ""
+      resources:
+        - services
+        - endpoints
+        - nodes/metrics
+      verbs: ["get", "list", "watch"]
+    - nonResourceURLs: ["/metrics", "/metrics/cadvisor"]
+      verbs: ["get"]
+
+config:
+  connectors:
+    spanmetrics:
+      aggregation_temporality: "AGGREGATION_TEMPORALITY_CUMULATIVE"
+      histogram:
+        explicit: # using default bucket
+      dimensions: # include non-default span attributes
+        - name: env
+  exporters:
+    debug:
+      verbosity: basic #basic, normal, detailed
+    otlp/chronosphere:
+      endpoint: "${CHRONOSPHERE_ORG_NAME}.chronosphere.io:443"
+      retry_on_failure:
+        enabled: true
+      compression: gzip
+      headers:
+        API-Token: "${CHRONOSPHERE_API_TOKEN}"
+  processors:
+    resourcedetection:
+      detectors: [env, system]
+      timeout: 2s
+      override: true
+    resource:
+      attributes:
+        - action: insert
+          from_attribute: host.name
+          key: service.instance.id
+        - action: upsert
+          value: "se-sandbox-partner-threec-demo"
+          key: "loadsource"
+    batch:
+      timeout: 1s
+      send_batch_size: 1000
+      send_batch_max_size: 2000
+  service:
+    pipelines:
+      metrics:
+        receivers: [otlp, prometheus, spanmetrics]
+        processors: [batch, memory_limiter, resourcedetection, resource]
+        exporters: [otlp/chronosphere]
+      traces:
+        receivers: [otlp]
+        processors: [batch, memory_limiter, resource]
+        exporters: [otlp/chronosphere, debug, spanmetrics]
+    telemetry:
+      metrics:
+        address: ${env:MY_POD_IP}:8888
+      # logs:
+      #   level: DEBUG
+  receivers:
+    jaeger: null
+    zipkin: null
+    prometheus:
+      config:
+        scrape_configs:
+          - job_name: "node-exporter"
+            scrape_interval: 30s
+            kubernetes_sd_configs:
+              - role: endpoints
+            relabel_configs:
+              - source_labels: [__meta_kubernetes_endpoints_name]
+                regex: "node-exporter"
+                action: keep
+
+          - job_name: kube-state-metrics
+            scrape_interval: 30s
+            scrape_timeout: 30s
+            # adapted from https://github.com/prometheus-operator/kube-prometheus/blob/main/manifests/kubeStateMetrics-serviceMonitor.yaml
+            scheme: https
+            metrics_path: /metrics
+            tls_config:
+              ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+              insecure_skip_verify: true # needed to evade tls cert error
+            authorization:
+              credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+            metric_relabel_configs:
+              - action: drop
+                regex: kube_endpoint_address_not_ready|kube_endpoint_address_available
+                source_labels:
+                  - __name__
+            static_configs:
+              - targets:
+                  ["kube-state-metrics.collectors.svc.cluster.local:8443"]
+          - job_name: opentelemetry-collector
+            scrape_interval: 30s
+            static_configs:
+              - targets:
+                  - ${env:MY_POD_IP}:8888
+
+          - job_name: k8s-cadvisor
+            scrape_interval: 30s
+            # Copied from https://github.com/prometheus/prometheus/blob/main/documentation/examples/prometheus-kubernetes.yml
+            scheme: https
+            metrics_path: /metrics/cadvisor
+            tls_config:
+              ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            authorization:
+              credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+            kubernetes_sd_configs:
+              - role: node
+            relabel_configs:
+              - action: labelmap
+                regex: __meta_kubernetes_node_label_(.+)
+
+ports:
+  jaeger-compact:
+    enabled: false
+  jaeger-thrift:
+    enabled: false
+  jaeger-grpc:
+    enabled: false
+  zipkin:
+    enabled: false
+  metrics:
+    enabled: true
+    containerPort: 8888
+    servicePort: 8888
+    protocol: TCP
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1024Mi
+  requests:
+    cpu: 100m
+    memory: 200Mi
+
+presets:
+  kubernetesAttributes:
+    enabled: false
+  kubernetesEvents:
+    enabled: false
+  clusterMetrics:
+    enabled: false
+  kubeletMetrics:
+    enabled: false

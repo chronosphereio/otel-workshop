@@ -1,0 +1,35 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+processors:
+  batch:
+  resource:
+    attributes:
+      - action: insert
+        value: "${env:HOSTNAME}"
+        key: service.instance.id
+      - action: upsert
+        value: "${env:USER}"
+        key: "loadsource"
+exporters:
+  debug:
+    verbosity: detailed
+  otlp/chronosphere:
+    endpoint: "${env:CHRONOSPHERE_ORG_NAME}.chronosphere.io:443"
+    compression: gzip
+    headers:
+      API-Token: "${env:CHRONOSPHERE_API_TOKEN}"
+service:
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [otlp/chronosphere, debug]
+    traces:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [otlp/chronosphere, debug]
