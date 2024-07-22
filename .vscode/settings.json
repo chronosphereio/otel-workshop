@@ -1,4 +1,9 @@
 {
+    "vs-kubernetes": {
+        "disable-linters": [
+            "resource-limits"
+        ],
+    },
     "cSpell.words": [
         "bitnami",
         "infr",
