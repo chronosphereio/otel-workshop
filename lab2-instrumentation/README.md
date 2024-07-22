@@ -49,7 +49,6 @@ make build-images load-to-kind deploy
 
 ## Deploying kv-mall in k8s
 ```bash
-kubectl apply -f prod-deploy/kv-mall-manifest/instrumentation.yaml -n kv-mall-infra
-kubectl apply -f prod-deploy/kv-mall-manifest/kv-mall.yaml -n kv-mall-infra
+kubectl apply -f prod-deploy/kv-mall-manifest -n kv-mall-infra
 ```
 
