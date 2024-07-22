@@ -12,6 +12,9 @@ spec:
     metadata:
       labels:
         app: analytics
+      annotations:
+        instrumentation.opentelemetry.io/inject-go: "true"
+        instrumentation.opentelemetry.io/otel-go-auto-target-exe: "/analytics"
     spec:
       containers:
         - name: analytics
@@ -51,6 +54,8 @@ spec:
     metadata:
       labels:
         app: coupon
+      annotations:
+        instrumentation.opentelemetry.io/inject-nodejs: "true"
     spec:
       containers:
         - name: coupon
@@ -87,6 +92,8 @@ spec:
     metadata:
       labels:
         app: frontend
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "true"
     spec:
       containers:
         - name: frontend
@@ -127,6 +134,8 @@ spec:
     metadata:
       labels:
         app: inventory
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "true"
     spec:
       containers:
         - name: inventory
@@ -160,6 +169,9 @@ spec:
     metadata:
       labels:
         app: load-generator
+      annotations:
+        instrumentation.opentelemetry.io/inject-go: "true"
+        instrumentation.opentelemetry.io/otel-go-auto-target-exe: "/load-generator"
     spec:
       containers:
         - name: load-generator
@@ -196,6 +208,9 @@ spec:
     metadata:
       labels:
         app: membership
+      annotations:
+        instrumentation.opentelemetry.io/inject-go: "true"
+        instrumentation.opentelemetry.io/otel-go-auto-target-exe: "/membership"
     spec:
       containers:
         - name: membership
@@ -205,6 +220,12 @@ spec:
               value: kafka-service.kv-mall-infra:9092
           ports:
             - containerPort: 8080
+          securityContext:
+            runAsUser: 0
+            capabilities:
+              add:
+                - SYS_PTRACE
+            privileged: true
 ---
 kind: Service
 apiVersion: v1
@@ -265,6 +286,8 @@ spec:
     metadata:
       labels:
         app: warehouse
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "true"
     spec:
       containers:
         - name: warehouse
