@@ -259,6 +259,9 @@ spec:
           image: lincharles/kv-mall-pricing-rust:0.2.0
           ports:
             - containerPort: 8080
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://otel-collector-opentelemetry-collector.collectors:4317"
 ---
 kind: Service
 apiVersion: v1
