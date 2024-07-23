@@ -8,8 +8,18 @@
     `export HOSTNAME=$(HOSTNAME) && ./otelcol --config=otel-collector-config.yaml`
 3. Install telemetrygen utility
 
+    `docker pull ghcr.io/open-telemetry/opentelemetry-collector-contrib/telemetrygen:latest`
+
+    or
+
     `go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest`
 4. Send some data and verify collector is configured successfully.
+
+    `docker run ghcr.io/open-telemetry/opentelemetry-collector-contrib/telemetrygen metrics --otlp-insecure --duration 5s --otlp-endpoint host.docker.internal:4317`
+
+    `docker run ghcr.io/open-telemetry/opentelemetry-collector-contrib/telemetrygen traces --otlp-insecure --duration 5s --child-spans 10 --otlp-endpoint host.docker.internal:4317`
+
+    or
 
     `~/go/bin/telemetrygen metrics --otlp-insecure --duration 5s`
 
