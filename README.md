@@ -58,7 +58,7 @@ Your laptop or VM will need outbound public internet access to these hosts, prot
 <a name="1.4-obtain-environment-variables"></a>
 #### 1.4. Obtain environment variables
 
-You will be provided the tenant org name and token. You will need to update your local copy of the [`./env`](env) file from this repo with the following values.
+You will be provided the tenant org name and token. You will need to set the following environment variables with the provided values.
 
 |Environment Variable|Description|
 |--------------------|------------|
