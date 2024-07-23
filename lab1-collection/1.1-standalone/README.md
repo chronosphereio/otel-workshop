@@ -10,7 +10,7 @@
 
     `docker pull ghcr.io/open-telemetry/opentelemetry-collector-contrib/telemetrygen:latest`
 
-    or
+    or if you have go compiler
 
     `go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest`
 4. Send some data and verify collector is configured successfully.
@@ -19,7 +19,7 @@
 
     `docker run ghcr.io/open-telemetry/opentelemetry-collector-contrib/telemetrygen traces --otlp-insecure --duration 5s --child-spans 10 --otlp-endpoint host.docker.internal:4317`
 
-    or
+    or if compiled locally
 
     `~/go/bin/telemetrygen metrics --otlp-insecure --duration 5s`
 
