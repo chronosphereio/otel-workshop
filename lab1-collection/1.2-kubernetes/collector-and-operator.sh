@@ -15,6 +15,8 @@ fi
 set -x #echo on
 cd "$(dirname "$0")"
 kubectl create namespace collectors
+helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+helm repo update open-telemetry 
 # otel-collector deployed using helm is not managed by otel operator
 # to deploy an otel-collector managed by the operator, deploy a kind of "OpenTelemetryCollector"
 kubectl -n collectors create secret generic chronosphere-secret --from-literal=api-token="$CHRONOSPHERE_API_TOKEN" --from-literal=org="$CHRONOSPHERE_ORG_NAME"
@@ -29,8 +31,6 @@ kubectl -n collectors get pods
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.9.0/cert-manager.yaml
 # Wait for all cert-manager resource to be up and running
 sleep 90
-helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
-helm repo update open-telemetry 
 # Use an automatically generated self-signed TLS certificate by setting admissionWebhooks.certManager.enabled
 # to false and admissionWebhooks.autoGenerateCert to true (default)
 helm upgrade --install otel-operator open-telemetry/opentelemetry-operator  \
