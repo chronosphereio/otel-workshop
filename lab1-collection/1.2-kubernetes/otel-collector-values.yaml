@@ -104,40 +104,6 @@ config:
     prometheus:
       config:
         scrape_configs:
-          - job_name: "node-exporter"
-            scrape_interval: 30s
-            kubernetes_sd_configs:
-              - role: endpoints
-            relabel_configs:
-              - source_labels: [__meta_kubernetes_endpoints_name]
-                regex: "node-exporter"
-                action: keep
-
-          - job_name: kube-state-metrics
-            scrape_interval: 30s
-            scrape_timeout: 30s
-            # adapted from https://github.com/prometheus-operator/kube-prometheus/blob/main/manifests/kubeStateMetrics-serviceMonitor.yaml
-            scheme: https
-            metrics_path: /metrics
-            tls_config:
-              ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-              insecure_skip_verify: true # needed to evade tls cert error
-            authorization:
-              credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-            metric_relabel_configs:
-              - action: drop
-                regex: kube_endpoint_address_not_ready|kube_endpoint_address_available
-                source_labels:
-                  - __name__
-            static_configs:
-              - targets:
-                  ["kube-state-metrics.collectors.svc.cluster.local:8443"]
-          - job_name: opentelemetry-collector
-            scrape_interval: 30s
-            static_configs:
-              - targets:
-                  - ${env:MY_POD_IP}:8888
-
           - job_name: k8s-cadvisor
             scrape_interval: 30s
             # Copied from https://github.com/prometheus/prometheus/blob/main/documentation/examples/prometheus-kubernetes.yml
