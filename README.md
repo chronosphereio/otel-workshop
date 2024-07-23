@@ -21,12 +21,14 @@
 You will need a Kubernetes cluster to deploy the workshop applications. You will need a laptop or VM with the following software installed (use the links for installation instructions):
 
 * [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+* [docker](https://docs.docker.com/engine/install/)
 * [kubectl](https://kubernetes.io/docs/tasks/tools/)
 * [helm](https://helm.sh/docs/intro/install/)
 
 Verify your installations by running these commands in your terminal:
 
 * `git --version` (expected output: `2.32.1` or higher)
+* `docker --version` (expected output: `20.10.12` or higher)
 * `kubectl version` (expected output: `1.27` or higher)
 * `helm version` (expected output: `3.1` or higher)
 
@@ -37,7 +39,7 @@ Verify your installations by running these commands in your terminal:
 You will need to clone this repository:
 
 ```sh
-git clone #todo
+git clone https://github.com/chronosphereio/otel-workshop.git
 ```
 
 
@@ -61,4 +63,4 @@ You will be provided the tenant org name and token. You will need to update your
 |Environment Variable|Description|
 |--------------------|------------|
 |**`CHRONOSPHERE_ORG_NAME`**|Tenant Organization Name|
-|**`CHRONOSPHERE_API_TOKEN`**|Provide by your contact at Chronosphere`|
+|**`CHRONOSPHERE_API_TOKEN`**|Provide by your contact at Chronosphere|
