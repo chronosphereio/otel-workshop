@@ -12,7 +12,9 @@ processors:
       - action: insert
         value: "${env:HOSTNAME}"
         key: service.instance.id
-      - action: upsert
+  attributes:
+    actions:
+      - action: insert
         value: "${env:USER}"
         key: "loadsource"
 exporters:
@@ -27,9 +29,9 @@ service:
   pipelines:
     metrics:
       receivers: [otlp]
-      processors: [batch, resource]
+      processors: [batch, attributes, resource]
       exporters: [otlp/chronosphere, debug]
     traces:
       receivers: [otlp]
-      processors: [batch, resource]
+      processors: [batch, attributes, resource]
       exporters: [otlp/chronosphere, debug]
