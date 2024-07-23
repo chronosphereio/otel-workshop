@@ -10,5 +10,8 @@
         "kompose",
         "labelmap",
         "resourcedetection"
+    ],
+    "rust-analyzer.linkedProjects": [
+        "lab2-instrumentation/pricing/Cargo.toml"
     ]
 }
