@@ -1,6 +1,6 @@
 # Standalone collector
 1. Follow steps in the [doc](https://opentelemetry.io/docs/collector/installation/#manual-linux-installation) to install collector on your system.
-2. Set environment variables and launch the collector using otel-collector-config.yaml
+2. Set environment variables and launch the collector using otel-collector-config.yaml. You can [clone this repo](../../README.md#12-clone-this-repo) or [download the individual](https://raw.githubusercontent.com/chronosphereio/otel-workshop/main/lab1-collection/1.1-standalone/otel-collector-config.yaml) file.
     ```sh
     export CHRONOSPHERE_ORG_NAME=
     export CHRONOSPHERE_API_TOKEN=
