@@ -34,6 +34,7 @@ async fn get_price(query: web::Query<PriceQuery>) -> Result<impl Responder> {
     let price_result = task::spawn_blocking(move || get_price_from_db(id))
         .await
         .map_err(|e| actix_web::error::ErrorInternalServerError(e))?;
+    
     Ok(web::Json(price_result))
 }
 
