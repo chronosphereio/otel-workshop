@@ -39,8 +39,10 @@ async fn get_price(query: web::Query<PriceQuery>) -> Result<impl Responder> {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| App::new().service(web::resource("/price").route(web::get().to(get_price))))
-        .bind("0.0.0.0:8080")?
-        .run()
-        .await
+    HttpServer::new(|| {
+        App::new().service(web::resource("/price").route(web::get().to(get_price)))
+    })
+    .bind("0.0.0.0:8080")?
+    .run()
+    .await
 }
