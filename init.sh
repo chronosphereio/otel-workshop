@@ -31,7 +31,7 @@ echo "######################################################## Homebrew installa
 
 echo "######################################################## Installing Docker Desktop with homebrew cask ########################################################"
 
-brew cask install docker
+brew list docker || brew install docker --cask
 
 echo "######################################################## Docker Desktop installation complete ########################################################"
 
@@ -51,7 +51,7 @@ echo "######################################################## kubectl has been 
 
 echo "######################################################## Installing yarn ########################################################"
 
-brew install yarn
+brew list yarn || brew install yarn
 
 echo "######################################################## Yarn installation complete ########################################################"
 
