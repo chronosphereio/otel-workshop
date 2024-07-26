@@ -338,7 +338,7 @@ spec:
     spec:
       containers:
         - name: inventory
-          image: keyval/kv-mall-inventory:v0.3
+          image: lincharles/kv-mall-inventory:0.4.0
           ports:
             - containerPort: 8080
 ---
