@@ -24,6 +24,7 @@ You will need a Kubernetes cluster to deploy the workshop applications. You will
 * [docker](https://docs.docker.com/engine/install/)
 * [kubectl](https://kubernetes.io/docs/tasks/tools/)
 * [helm](https://helm.sh/docs/intro/install/)
+* [yarn](https://classic.yarnpkg.com/en/docs/install#mac-stable)
 
 Verify your installations by running these commands in your terminal:
 
