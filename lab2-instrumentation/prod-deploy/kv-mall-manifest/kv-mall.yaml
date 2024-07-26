@@ -362,7 +362,8 @@ spec:
     spec:
       containers:
         - name: load-generator
-          image: keyval/kv-mall-load-generator:v0.3
+          image: lincharles/kv-mall-load-generator:0.4.0
+          imagePullPolicy: Always
           env:
             - name: BUY_PRODUCT_INTERVAL
               value: "2s"
